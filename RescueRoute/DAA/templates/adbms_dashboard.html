@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADBMS & AI/ML Transaction Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .log-box { height: 350px; overflow-y: auto; background: #212529; color: #00ffcc; font-family: monospace; padding: 15px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container py-4">
+        <header class="pb-3 mb-4 border-bottom">
+            <h1 class="h3 fw-bold text-primary">🚀 Distributed ADBMS with ML Deadlock Prediction & Active Triggers</h1>
+            <p class="text-muted m-0">MCA Advanced Database Management Systems Project Dashboard</p>
+        </header>
+
+        <div class="row">
+            <!-- Left Column: Inventory State & Transaction Trigger Form -->
+            <div class="col-md-5">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-dark text-white">📦 Warehouse Inventory (North Node)</div>
+                    <div class="card-body">
+                        <table class="table table-striped table-sm">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Item</th>
+                                    <th>Stock</th>
+                                    <th>Threshold</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in items %}
+                                <tr>
+                                    <td>{{ item.item_id }}</td>
+                                    <td>{{ item.item_name }}</td>
+                                    <td><strong>{{ item.stock_level }}</strong></td>
+                                    <td>{{ item.reorder_threshold }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">⚙️ Simulate Transaction Workload</div>
+                    <div class="card-body">
+                        <form id="txnForm">
+                            <div class="mb-2">
+                                <label class="form-label small">Transaction ID</label>
+                                <input type="text" id="txn_id" class="form-control form-control-sm" value="TXN-UI-01">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small">Select Item</label>
+                                <select id="item_id" class="form-select form-select-sm">
+                                    <option value="ITEM-101">ITEM-101 (Wireless Mouse)</option>
+                                    <option value="ITEM-102">ITEM-102 (Mechanical Keyboard - Triggers Restock)</option>
+                                    <option value="ITEM-103">ITEM-103 (HD Monitor)</option>
+                                </select>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small">New Stock Level Target</label>
+                                <input type="number" id="new_stock" class="form-control form-control-sm" value="4">
+                            </div>
+                            <div class="row">
+                                <div class="col-6 mb-2">
+                                    <label class="form-label small">Item Count</label>
+                                    <input type="number" id="item_count" class="form-control form-control-sm" value="4">
+                                </div>
+                                <div class="col-6 mb-2">
+                                    <label class="form-label small">Write Ratio (0-1)</label>
+                                    <input type="number" step="0.1" id="write_ratio" class="form-control form-control-sm" value="0.8">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-success btn-sm w-100 mt-2">Execute Transaction with ML Check</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Live Output & Event Logs -->
+            <div class="col-md-7">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                        <span>📋 Live System Execution Log (WAL, Locks, ML & Triggers)</span>
+                        <button class="btn btn-sm btn-light" onclick="location.reload()">Refresh Page</button>
+                    </div>
+                    <div class="card-body">
+                        <div class="log-box" id="logBox">
+                            {% for log in logs %}
+                                <div>> {{ log.message }}</div>
+                            {% endfor %}
+                            {% if not logs %}
+                                <div>> System initialized. Ready for transactions...</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('txnForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const payload = {
+                txn_id: document.getElementById('txn_id').value,
+                item_id: document.getElementById('item_id').value,
+                new_stock: document.getElementById('new_stock').value,
+                item_count: document.getElementById('item_count').value,
+                write_ratio: document.getElementById('write_ratio').value,
+                concurrency: 8,
+                wait_time: 120
+            };
+
+            const response = await fetch('/run_transaction', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if(response.ok) {
+                location.reload(); // Refresh to show updated inventory and logs
+            }
+        });
+    </script>
+</body>
+</html>
